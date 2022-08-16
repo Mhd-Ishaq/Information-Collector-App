@@ -1,18 +1,18 @@
 import React from 'react';
 import Posts from './Posts';
-// import axios from 'axios';
+import axios from 'axios';
 import {Link} from 'react-router-dom';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import Pagination from './Pagination';
 
-let list = JSON.parse(localStorage.getItem('list'));
+// let list = JSON.parse(localStorage.getItem('list'));
 
 const Users = () => {
   const [posts,setPosts]= useState([]);
-  // const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage]= useState(1);
-  const [postsPerPage]= useState(3);
+  const [postsPerPage]= useState(25);
   const [search, setSearch]= useState('');
 
   const [order, setOrder] = useState("ASC");
@@ -51,14 +51,15 @@ const currentPosts = posts.slice(indexofFirstPost,indexOfLastPost);
 const paginate = (pageNumber)=> setCurrentPage (pageNumber);
 
 useEffect(()=>{
-  // const fetchPosts = async ()=>{
-  //   setLoading(true);
-  //   const res = await axios.get('https://jsonplaceholder.typicode.com/posts');
-  //   setPosts(res.data);
-  //   setLoading(false);
-  // }
-  // fetchPosts()
-  setPosts(list);
+  const fetchPosts = async ()=>{
+    setLoading(true);
+    // const res = await axios.get('https://jsonplaceholder.typicode.com/posts');
+    const res = await axios.get('https://datapeace-storage.s3-us-west-2.amazonaws.com/dummy_data/users.json');
+    setPosts(res.data);
+    setLoading(false);
+  }
+  fetchPosts()
+  // setPosts(list);
   
 },[])
 
@@ -73,7 +74,7 @@ useEffect(()=>{
           type="search" placeholder="Search" aria-label="Search"/>
       </form>
       </nav>
-    <Posts currentPosts={currentPosts}  sorting={sorting} search={search} />
+    <Posts currentPosts={currentPosts}  sorting={sorting} search={search} loading={loading} />
     <Pagination  postsPerPage={postsPerPage} totalPosts={posts.length}  
     paginate={paginate}/> 
     </div>
